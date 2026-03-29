@@ -1,69 +1,69 @@
 # 1031 Exchange Forum Monitor — POC
 
-Sistema automatizado que monitorea Reddit en busca de menciones de "1031 exchange",
-genera respuestas con Claude, solicita aprobación por email y publica automáticamente.
+Automated system that monitors Reddit for mentions of "1031 exchange",
+generates responses with Claude, requests approval via email, and posts automatically.
 
-## Flujo completo
+## Complete Flow
 
 ```
-Reddit → scraper.py → responder.py (Claude) → emailer.py → [APROBA/RECHAZA]
+Reddit → scraper.py → responder.py (Claude) → emailer.py → [APPROVE/REJECT]
                                                                     ↓
                                                            approval_server.py
                                                                     ↓
                                                              poster.py → Reddit
 ```
 
-## Setup rápido
+## Quick Setup
 
-### 1. Crear entorno virtual e instalar dependencias
+### 1. Create virtual environment and install dependencies
 ```bash
 python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 ```
 
-### 2. Configurar credenciales
+### 2. Configure credentials
 ```bash
 copy .env.example .env
-# Editar .env con tus credenciales
+# Edit .env with your credentials
 ```
 
-Credenciales necesarias:
-| Servicio | Dónde obtenerlo |
-|----------|----------------|
-| Reddit API | https://www.reddit.com/prefs/apps (tipo: script) |
+Required credentials:
+| Service | Where to get it |
+|---------|-----------------|
+| Reddit API | https://www.reddit.com/prefs/apps (type: script) |
 | Claude API | https://console.anthropic.com/ |
 | Gmail App Password | https://myaccount.google.com/apppasswords |
 
-### 3. Ejecutar
+### 3. Run
 ```bash
 python main.py
 ```
 
-El sistema arranca dos procesos en paralelo:
-- **Monitor loop** — escanea Reddit cada 5 minutos
-- **Approval server** — escucha en http://localhost:5055
+The system starts two processes in parallel:
+- **Monitor loop** — scans Reddit every 5 minutes
+- **Approval server** — listens on http://localhost:5055
 
 ### Dashboard
-Abre http://localhost:5055/status para ver todos los posts procesados.
+Open http://localhost:5055/status to view all processed posts.
 
-## Archivos
+## Files
 
-| Archivo | Función |
-|---------|---------|
-| `config.py` | Centraliza toda la configuración |
-| `database.py` | SQLite: tracking de posts y estado |
-| `scraper.py` | PRAW — busca keyword matches en Reddit |
-| `responder.py` | Claude API — genera borradores de respuesta |
-| `emailer.py` | Gmail SMTP — envía email de aprobación con botones |
-| `approval_server.py` | Flask — recibe clicks de Aprobar/Rechazar |
-| `poster.py` | PRAW — publica el reply aprobado en Reddit |
-| `main.py` | Orquesta todo en un loop continuo |
+| File | Purpose |
+|------|---------|
+| `config.py` | Centralizes all configuration |
+| `database.py` | SQLite: post tracking and state |
+| `scraper.py` | PRAW — searches for keyword matches on Reddit |
+| `responder.py` | Claude API — generates draft responses |
+| `emailer.py` | Gmail SMTP — sends approval email with buttons |
+| `approval_server.py` | Flask — receives Approve/Reject clicks |
+| `poster.py` | PRAW — posts the approved reply to Reddit |
+| `main.py` | Orchestrates everything in a continuous loop |
 
-## Estados de un post
+## Post States
 
 ```
 pending → draft_ready → pending_approval → approved → posted
                                          ↘ rejected
-                   (error en cualquier punto) → error
+                      (error at any point) → error
 ```

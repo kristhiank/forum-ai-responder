@@ -3,12 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Reddit API
-REDDIT_CLIENT_ID     = os.getenv("REDDIT_CLIENT_ID")
-REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
-REDDIT_USERNAME      = os.getenv("REDDIT_USERNAME")
-REDDIT_PASSWORD      = os.getenv("REDDIT_PASSWORD")
-REDDIT_USER_AGENT    = os.getenv("REDDIT_USER_AGENT", "1031ExchangeMonitor/1.0")
+# Reddit (public JSON - no API key needed)
+REDDIT_USER_AGENT = os.getenv("REDDIT_USER_AGENT", "1031ExchangeMonitor/1.0")
 
 # Subreddits to monitor (comma-separated in .env)
 SUBREDDITS = os.getenv("SUBREDDITS", "realestateinvesting,RealEstate,tax,personalfinance").split(",")
